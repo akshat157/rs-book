@@ -7,23 +7,31 @@ fn main() {
 
     let secret_number = rand::thread_rng().gen_range(1..=100);
 
-    println!("The secret number is: {secret_number}");
+    println!("The secret number is: {secret_number}");  // Temporary
 
-    println!("Please input your guess.");
-
-    let mut guess = String::new();
-
-    io::stdin()
+    loop {    
+        println!("Please input your guess.");
+        
+        let mut guess = String::new();
+        
+        io::stdin()
         .read_line(&mut guess)
         .expect("Failed to read line");
+        
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,     // Return input if it is a u32 number
+            Err(_) => continue,     // Ignore invalid inputs and continue the game
+        };
 
-    let guess: u32 = guess.trim().parse().expect("Please enter a number!");
-
-    println!("You guessed: {guess}");
-
-    match guess.cmp(&secret_number) {
-        Ordering::Less => println!("Too small"),
-        Ordering::Greater => println!("Too large"),
-        Ordering::Equal => println!("You win!"),
+        println!("You guessed: {guess}");
+        
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("Too small"),
+            Ordering::Greater => println!("Too large"),
+            Ordering::Equal => {
+                println!("You win!");
+                break;  // Quit when the guess is correct.
+            },
+        }
     }
 }
