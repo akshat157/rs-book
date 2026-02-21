@@ -21,7 +21,7 @@ fn main() {
 
 fn fib_recursive(n: u8) -> u64 {
     if n <= 1 { return u64::from(n); }
-    fib_recursive(n-1) + fib_recursive(n-2);
+    fib_recursive(n-1) + fib_recursive(n-2)
 }
 
 fn fib_bottom_up(n: u8) -> u64 {
