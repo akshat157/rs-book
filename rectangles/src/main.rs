@@ -57,9 +57,10 @@ fn main() {
     println!("rect2 can hold rect3: {}", rect2.can_hold(&rect3));
     println!("rect3 can hold rect1: {}", rect3.can_hold(&rect1));
 
-    let sq = Rectangle::as_square(5);
-    
-    println!("Created a square with side: 5");
+    let side = 5;
+    let sq = Rectangle::as_square(side);
+
+    println!("Created a square with side: {side}");
     dbg!(&sq);
 }
 
