@@ -23,7 +23,6 @@ fn create_department(dept: &str, reg: &mut HashMap<String, Vec<String>>) {
     println!("Create {dept}");
     reg.insert(dept.to_string(), Vec::new());
     // TODO: Error handling
-    println!("{dept}");
     println!("{reg:?}");
 }
 
@@ -31,23 +30,60 @@ fn delete_department(dept: &str, reg: &mut HashMap<String, Vec<String>>) {
     println!("Delete {dept}");
     reg.remove(&dept.to_string());
     // TODO: Error handling
-    println!("{dept}");
     println!("{reg:?}");
 }
 
 fn add_employee(emp: &str, dept: &str, reg: &mut HashMap<String, Vec<String>>) {
     println!("Add {emp} to {dept}.");
+    match reg.get_mut(dept) {
+        Some(dept_emps) => {
+            dept_emps.push(emp.to_string());
+        }
+        None => {
+            println!("No department found by name {dept}");
+        }
+    }
     println!("{reg:?}");
 }
 
 fn remove_employee(emp: &str, dept: &str, reg: &mut HashMap<String, Vec<String>>) {
     println!("Remove {emp} from {dept}.");
+    match reg.get_mut(dept) {
+        Some(dept_emps) => {
+            let mut i: Option<usize> = None;
+            for (idx, val) in dept_emps.iter_mut().enumerate() {
+                if val == emp {
+                    i = Some(idx);
+                    break;
+                }
+            }
+            if let Some(i) = i {
+                dept_emps.remove(i);
+            }
+        }
+        None => {
+            println!("No department found by name {dept}");
+        }
+    }
     println!("{reg:?}");
 }
 
+fn show_department(dept: &str, reg: &HashMap<String, Vec<String>>) {
+    match reg.get(dept) {
+        Some(dept_emps) => {
+            println!("Showing employees for '{dept}'");
+            for emp in dept_emps {
+                println!("{emp}");
+            }
+        }
+        None => println!("No department found by name {dept}"),
+    }
+}
+
 fn show_all_departments(reg: &HashMap<String, Vec<String>>) {
-    println!("{reg:?}");
-    println!("All departments!!!");
+    for dept in reg.keys() {
+        show_department(dept, reg);
+    }
 }
 
 fn print_invalid_prompt() {
@@ -114,6 +150,8 @@ fn main() {
                 create_department(pieces[1], &mut registry);
             } else if pieces[0] == "delete" {
                 delete_department(pieces[1], &mut registry);
+            } else if pieces[0] == "show" {
+                show_department(pieces[1], &registry)
             } else {
                 print_invalid_prompt();
             }
