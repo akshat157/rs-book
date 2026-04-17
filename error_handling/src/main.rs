@@ -1,34 +1,29 @@
 use std::{
+    fs,
     fs::File,
-    io::{self, ErrorKind, Read, Write},
+    io::{self, ErrorKind, Write},
 };
 
-fn read_text_from_file(filename: &str) -> Result<String, io::Error> {
-    let text_file_result = File::open(filename);
-
-    let mut text_file = match text_file_result {
-        Ok(file) => file,
-        Err(e) => return Err(e),
-    };
-
-    let mut text = String::new();
-
-    match text_file.read_to_string(&mut text) {
-        Ok(_) => Ok(text),
-        Err(e) => Err(e),
-    }
+fn last_char_of_first_line(text: &str) -> Option<char> {
+    text.lines().next()?.chars().last()
 }
 
-fn main() {
-    let greeting_file_result = File::open("hello.txt");
+fn read_text_from_file(filename: &str) -> Result<String, io::Error> {
+    fs::read_to_string(filename)
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let greeting_file_path = "hello.txt";
+    let greeting_file_result = File::open(greeting_file_path);
 
     let _greeting_file = match greeting_file_result {
         Ok(file) => file,
         Err(error) => match error.kind() {
-            ErrorKind::NotFound => match File::create("hello.txt") {
+            ErrorKind::NotFound => match File::create(greeting_file_path) {
                 Ok(mut fc) => {
-                    println!("Writing text to file: \"Rust wrote this text!\n\"");
-                    fc.write_all("Rust wrote this text!\n".as_bytes())
+                    let text = "Hello from Rust!";
+                    println!("Writing text to file: \"{text}\"");
+                    fc.write_all(text.as_bytes())
                         .expect("Failed to write to file");
                     fc
                 }
@@ -38,11 +33,16 @@ fn main() {
         },
     };
 
-    let file_text = match read_text_from_file("hello.txt") {
+    let file_text = match read_text_from_file(greeting_file_path) {
         Ok(text) => text,
         Err(e) => panic!("Error reading file text: {e:?}"),
     };
 
-    println!("text read from file:");
-    print!("{file_text}");
+    let last_char_of_first_line = last_char_of_first_line(&file_text)
+        .expect("Couldn't get the last character of the first line.");
+
+    println!("text read from file: \"{file_text}\"");
+    println!("last char of the first line in the text is: \'{last_char_of_first_line}\'");
+
+    Ok(())
 }
