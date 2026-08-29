@@ -1,3 +1,6 @@
+use hello_cargo::greet;
+
 fn main() {
-    println!("Hello, cargo!");
+    let greeting = greet("Cargo");
+    println!("{greeting}");
 }
