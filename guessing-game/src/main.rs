@@ -1,4 +1,4 @@
-use guessing_game::guessing_game::Guess;
+use guessing_game::guess::Guess;
 use rand::Rng;
 use std::cmp::Ordering;
 use std::io;
