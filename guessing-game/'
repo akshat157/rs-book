@@ -1,7 +1,0 @@
-#[cfg(test)]
-use crate::guess::Guess;
-
-#[test]
-fn out_of_allowed_range() {
-    Guess::new(200);
-}
