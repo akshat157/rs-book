@@ -1,5 +1,5 @@
-#[derive(Debug)]    // derived "Debug" trait. Helps us print ({val:?}) or pretty print ({val:#?}) to stdout or
-                    // stderr with println!(&val) or dbg!(&val)
+#[derive(Debug)] // derived "Debug" trait. Helps us print ({val:?}) or pretty print ({val:#?}) to stdout or
+// stderr with println!(&val) or dbg!(&val)
 struct Rectangle {
     width: u32,
     height: u32,
@@ -31,14 +31,14 @@ impl Rectangle {
 fn main() {
     let multiplier = 5;
     let rect1 = Rectangle {
-        width: dbg!(multiplier * 20),   // Possible since dbg macro returns the ownership back to
-                                        // the caller.
+        width: dbg!(multiplier * 20), // Possible since dbg macro returns the ownership back to
+        // the caller.
         height: dbg!(multiplier * 30),
     };
 
     let rect2 = Rectangle {
         width: 20,
-        height: 30
+        height: 30,
     };
 
     let rect3 = Rectangle {
@@ -46,13 +46,18 @@ fn main() {
         height: 25,
     };
 
-    dbg!(&rect1);   // Outputs to stderr. prints file, line#, param name and value. Takes ownership
-                    // and gives it back too.
+    dbg!(&rect1); // Outputs to stderr. prints file, line#, param name and value. Takes ownership
+    // and gives it back too.
 
     dbg!(&rect2);
     dbg!(&rect3);
     // println macro outputs to stdout. Does not take ownership of the data, only reference.
-    println!("Area of rect1 with w={} and h={} = {} sq. units.", rect1.width, rect1.height, rect1.area());
+    println!(
+        "Area of rect1 with w={} and h={} = {} sq. units.",
+        rect1.width,
+        rect1.height,
+        rect1.area()
+    );
     println!("rect1 can hold rect2: {}", rect1.can_hold(&rect2));
     println!("rect2 can hold rect3: {}", rect2.can_hold(&rect3));
     println!("rect3 can hold rect1: {}", rect3.can_hold(&rect1));
@@ -62,5 +67,34 @@ fn main() {
 
     println!("Created a square with side: {side}");
     dbg!(&sq);
-}
 
+    // Chapter 13: sort_by_keys for custom sorting
+    let mut rect_list = vec![
+        Rectangle {
+            width: 52,
+            height: 87,
+        },
+        Rectangle {
+            width: 15,
+            height: 19,
+        },
+        Rectangle {
+            width: 10,
+            height: 20,
+        },
+        Rectangle {
+            width: 92,
+            height: 43,
+        },
+    ];
+
+    let mut num_sort_ops = 0;
+    println!("Before sorting\n{rect_list:#?}");
+
+    rect_list.sort_by_key(|r| {
+        num_sort_ops += 1;
+        r.width
+    });
+
+    println!("After sorting\n{rect_list:#?}\nSorted in {num_sort_ops} operations.");
+}
