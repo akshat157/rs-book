@@ -21,6 +21,16 @@ impl<T> Deref for MyBox<T> {
     }
 }
 
+struct CustomSmartPointer {
+    data: String,
+}
+
+impl Drop for CustomSmartPointer {
+    fn drop(&mut self) {
+        println!("dropping CustomSmartPointer with data = {}!", self.data);
+    }
+}
+
 fn main() {
     let a = 5;
     let b = Box::new(5);
@@ -44,7 +54,21 @@ fn main() {
     // let name = "Rust";
     let m = MyBox::new(String::from("RustString"));
     hello(&m);
-    hello(&(*m)[..]);
+    // hello(&(*m)[..]);
+
+    let c = CustomSmartPointer {
+        data: String::from("some data"),
+    };
+    println!("c created");
+
+    let d = CustomSmartPointer {
+        data: String::from("other data"),
+    };
+    println!("d created");
+    drop(c);
+
+    // println!("data in c = {}", c.data);  // Doesn't work because c has been dropped before this
+    // call. So the borrow checker does not allow this call.
 }
 
 fn print_list<T: Display>(list: List<T>) {
