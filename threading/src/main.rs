@@ -1,19 +1,38 @@
-use std::{sync::mpsc, thread};
+use std::{sync::mpsc, thread, time::Duration};
 
 fn main() {
     let (tx, rx) = mpsc::channel();
 
+    let tx1 = tx.clone();
     thread::spawn(move || {
-        let msg = String::from("message writen by thread t1");
+        let msgs = vec![
+            String::from("hi!"),
+            String::from("from"),
+            String::from("thread"),
+            String::from("t1"),
+        ];
 
-        println!("t1 is sending: \"{msg}\"");
-        tx.send(msg).unwrap();
-
-        // The following statement gives compilation error as msg
-        // has been moved out of this closure in the tx.send() call.
-        // println!("t1 sent the following: {msg}");
+        for msg in msgs {
+            tx1.send(msg).unwrap();
+            thread::sleep(Duration::from_millis(500));
+        }
     });
 
-    let received_msg = rx.recv().unwrap();
-    println!("thread main received: \"{received_msg}\"");
+    thread::spawn(move || {
+        let msgs = vec![
+            String::from("some"),
+            String::from("message"),
+            String::from("from"),
+            String::from("t2"),
+        ];
+
+        for msg in msgs {
+            tx.send(msg).unwrap();
+            thread::sleep(Duration::from_millis(800));
+        }
+    });
+
+    for received_msg in rx {
+        println!("received: \"{received_msg}\"");
+    }
 }
