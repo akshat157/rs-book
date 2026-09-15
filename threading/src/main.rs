@@ -1,10 +1,19 @@
-use std::thread;
+use std::{sync::mpsc, thread};
 
 fn main() {
-    let v1 = vec![1, 2, 3];
-    let t1 = thread::spawn(move || {
-        println!("Here's the vector from thread: {v1:?}");
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        let msg = String::from("message writen by thread t1");
+
+        println!("t1 is sending: \"{msg}\"");
+        tx.send(msg).unwrap();
+
+        // The following statement gives compilation error as msg
+        // has been moved out of this closure in the tx.send() call.
+        // println!("t1 sent the following: {msg}");
     });
 
-    t1.join().unwrap();
+    let received_msg = rx.recv().unwrap();
+    println!("thread main received: \"{received_msg}\"");
 }
